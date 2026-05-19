@@ -716,13 +716,6 @@ function generateStatusline() {
     const ctxColor = ctxInfo.usedPct >= 90 ? c.brightRed : ctxInfo.usedPct >= 70 ? c.brightYellow : c.brightGreen;
     header += '  ' + c.dim + '\u2502' + c.reset + '  ' + ctxColor + '\u25CF ' + ctxInfo.usedPct + '% ctx' + c.reset;
   }
-  // Show cost from Claude Code stdin if available
-  if (costInfo && costInfo.costUsd > 0) {
-    header += '  ' + c.dim + '\u2502' + c.reset + '  ' + c.brightYellow + '$' + costInfo.costUsd.toFixed(2) + c.reset;
-    // Also show session cost in RMB (1 USD ≈ 7.2 CNY)
-    const rmbCost = costInfo.costUsd * 7.2;
-    header += '  ' + c.dim + '\u2502' + c.reset + '  ' + c.brightYellow + '\u00A5' + rmbCost.toFixed(2) + c.reset;
-  }
   // Show DeepSeek RMB balance with color coding
   const dsBalance = getDeepSeekBalance();
   if (dsBalance && dsBalance.balance > 0) {
@@ -804,23 +797,6 @@ function generateStatusline() {
     integStr
   );
 
-  // DeepSeek RMB balance line with remaining conversations estimate
-  const dsBalance2 = getDeepSeekBalance();
-  if (dsBalance2 && dsBalance2.balance > 0) {
-    const pricing = getModelPricing();
-    const remaining = estimateRemainingConversations(dsBalance2.balance);
-    const balanceColor = dsBalance2.balance >= 10 ? c.brightGreen : dsBalance2.balance >= 1 ? c.brightYellow : c.brightRed;
-    lines.push(
-      c.dim + '\u2500'.repeat(53) + c.reset
-    );
-    lines.push(
-      c.brightGreen + '\uD83D\uDCB0 DeepSeek ' + pricing.label + c.reset + '  ' +
-      balanceColor + '\u00A5 ' + dsBalance2.balance.toFixed(2) + c.reset + ' ' + c.dim + '(CNY)' + c.reset +
-      '  ' + c.dim + '\u2502' + c.reset + '  ' +
-      (remaining > 50 ? c.brightGreen : remaining > 10 ? c.brightYellow : c.brightRed) +
-      '\u2248 ' + remaining + ' \u8bdd' + c.reset
-    );
-  }
 
   return lines.join('\n');
 }
